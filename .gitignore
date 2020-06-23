@@ -28,3 +28,9 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Firebase cache
+.firebase/
+firebase-debug.log
+yarn.lock
+package-lock.json
