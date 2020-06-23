@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import cookies from 'js-cookie'
-import firebase from 'firebase/app'
-import 'firebase/auth'
-import initFirebase from '../auth/initFirebase'
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import cookies from "js-cookie";
+import firebase from "firebase/app";
+import "firebase/auth";
+import initFirebase from "./initFirebase";
 
-initFirebase()
+initFirebase();
 
 const useUser = () => {
-  const [user, setUser] = useState()
-  const router = useRouter()
+  const [user, setUser] = useState();
+  const router = useRouter();
 
   const logout = async () => {
     return firebase
@@ -17,25 +17,25 @@ const useUser = () => {
       .signOut()
       .then(() => {
         // Sign-out successful.
-        cookies.remove('auth')
-        router.push('/auth')
+        cookies.remove("auth");
+        router.push("/");
+        router.reload();
       })
       .catch((e) => {
-        console.error(e)
-      })
-  }
+        console.error(e);
+      });
+  };
 
   useEffect(() => {
-    const cookie = cookies.get('auth')
+    const cookie = cookies.get("auth");
     if (!cookie) {
-      router.push('/')
-      return
+      router.push("/");
+      return;
     }
-    setUser(JSON.parse(cookie))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    setUser(JSON.parse(cookie));
+  }, []);
 
-  return { user, logout }
-}
+  return { user, logout };
+};
 
-export { useUser }
+export { useUser };
