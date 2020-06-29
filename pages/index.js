@@ -1,92 +1,52 @@
 import React from "react";
 import useSWR from "swr";
 import { useUser } from "../utils/auth/useUser";
-import ButtonAppBar from "../components/ButtonAppBar";
 import FirebaseAuth from "../components/FirebaseAuth";
-import CssBaseline from "@material-ui/core/CssBaseline";
+import TweetList from "../components/TweetList";
 import { makeStyles } from "@material-ui/core/styles";
-import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
-import Grid from "@material-ui/core/Grid";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Container from "@material-ui/core/Container";
 
 const useStyles = makeStyles({
   root: {
     flexGrow: 1,
+    textAlign: "center",
   },
-  title: {
-    fontSize: 14,
-  },
-  pos: {
-    marginBottom: 12,
-  },
-  toolbar: {
-    minHeight: 100,
+  center: {
+    textAlign: "center",
   },
 });
 
-const fetcher = (url, token) =>
+const fetcher = (url) =>
   fetch(url, {
     method: "GET",
-    headers: new Headers({ "Content-Type": "application/json", token }),
+    headers: new Headers({ "Content-Type": "application/json" }),
     credentials: "same-origin",
   }).then((res) => res.json());
 
 const Index = () => {
-  const { user, logout } = useUser();
-  const { data, error } = useSWR(
-    user ? ["/api/getTweet", "Aqua_ix"] : null,
-    fetcher
-  );
+  const { user } = useUser();
+  const { data } = useSWR(user ? ["/api/getTweet"] : null, fetcher);
   const classes = useStyles();
+  const since = new Date(2020, 5, 28);
   return (
     <>
-      <CssBaseline />
-      <div className={classes.toolbar} />
-      <ButtonAppBar />
-      <div className={classes.root}>
-        <Grid
-          container
-          spacing={0}
-          direction="column"
-          alignItems="center"
-          style={{ minHeight: "100vh" }}
-        >
-          {!user && (
-            <dev>
-              <h1>自動ツイート消しアプリ</h1>
-              <FirebaseAuth />
-            </dev>
-          )}
-          {user && !data && (
-            <Grid item xs>
-              <h2>Loading......</h2>
-            </Grid>
-          )}
-          {data &&
-            !error &&
-            Object.values(data).map((row, index) => {
-              return (
-                <Grid item xs={12} key={index}>
-                  <Card>
-                    <CardContent>
-                      <Typography
-                        className={classes.title}
-                        color="textSecondary"
-                        gutterBottom
-                      >
-                        {row.created_at}
-                      </Typography>
-                      <Typography>{row.text}</Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              );
-            })}
-        </Grid>
-      </div>
+      {user ? (
+        data ? (
+          <div>
+            <TweetList data={data} since={since} />
+          </div>
+        ) : (
+          <Container maxWidth="sm" className={classes.center}>
+            <CircularProgress />
+          </Container>
+        )
+      ) : (
+        <dev className={classes.root}>
+          <h1>自動ツイート消しアプリ</h1>
+          <FirebaseAuth />
+        </dev>
+      )}
     </>
   );
 };

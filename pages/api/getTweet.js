@@ -9,8 +9,7 @@ const client = new Twitter({
 
 const getTweet = async (req, res) => {
   const params = {
-    count: 20,
-    exclude_replies: true,
+    exclude_replies: false,
     include_rts: false,
   };
 
@@ -18,9 +17,6 @@ const getTweet = async (req, res) => {
     "statuses/user_timeline",
     params,
     (error, tweets, response) => {
-      // tweets.filter((item, index) => {
-      //     if(item.created_at > )
-      // })
       if (!error) {
         res.status(200).json(tweets);
       }

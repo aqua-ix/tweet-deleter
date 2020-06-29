@@ -1,11 +1,17 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Head from "next/head";
-import { ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
+import ButtonAppBar from "../components/ButtonAppBar";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles(theme => ({
+  toolbar: theme.mixins.toolbar,
+}));
 
 export default function MyApp(props) {
   const { Component, pageProps } = props;
+  const classes = useStyles();
 
   React.useEffect(() => {
     // Remove the server-side injected CSS.
@@ -18,13 +24,15 @@ export default function MyApp(props) {
   return (
     <React.Fragment>
       <Head>
-        <title>My page</title>
+        <title>TweetDeleter</title>
         <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
       </Head>
       <CssBaseline />
+      <div className={classes.toolbar} />
+      <ButtonAppBar />
       <Component {...pageProps} />
     </React.Fragment>
   );
