@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
+import ListSubheader from "@material-ui/core/ListSubheader";
+import Tooltip from "@material-ui/core/Tooltip";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Divider from "@material-ui/core/Divider";
@@ -8,8 +10,17 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/RemoveCircle";
 import Container from "@material-ui/core/Container";
-import PropTypes from "prop-types";
 import TimePicker from "./TimePicker";
+import useSWR from "swr";
+import { useUser } from "../utils/auth/useUser";
+import LinearProgress from "@material-ui/core/LinearProgress";
+import DateFns, {
+  format,
+  set,
+  getHours,
+  startOfToday,
+  startOfTomorrow,
+} from "date-fns";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,62 +32,106 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-TweetList.propTypes = {
-  data: PropTypes.array,
-  since: PropTypes.object,
-};
-
 const dateFormatter = (arg) => {
   const date = new Date(arg);
-  return (
-    date.getMonth() +
-    1 +
-    "/" +
-    date.getDate() +
-    " " +
-    date.getHours() +
-    ":" +
-    (date.getMinutes() < 10 ? "0" : "") +
-    date.getMinutes()
-  );
+  return format(date, "M/dd HH:mm");
 };
 
-export default function TweetList(props) {
-  const { data, since } = props;
+const filterTweets = (data, since, until) => {
+  return data
+    ? data.filter((tweet) => {
+        const u = new Date(until);
+        const c = new Date(tweet.created_at);
+        const s = new Date(since);
+        return u > c && c > s;
+      })
+    : null;
+};
+
+const initialSinceDate = () => {
+  const hours = getHours(new Date());
+  if (hours < 6) {
+    return startOfToday();
+  } else {
+    return startOfTomorrow();
+  }
+};
+
+const initialUntilDate = () => {
+  const hours = getHours(new Date());
+  if (hours < 6) {
+    return set(startOfToday(), { hours: 6 });
+  } else {
+    return set(startOfTomorrow(), { hours: 6 });
+  }
+};
+
+const fetcher = (url) =>
+  fetch(url, {
+    method: "GET",
+    headers: new Headers({ "Content-Type": "application/json" }),
+    credentials: "same-origin",
+  }).then((res) => res.json());
+
+export default function TweetList() {
+  const { user } = useUser();
+  const { data } = useSWR(user ? ["/api/getTweet"] : null, fetcher);
+
+  const [since, setSince] = useState(initialSinceDate());
+  const [until, setUntil] = useState(initialUntilDate());
+  let filtered = filterTweets(data, since, until);
+  console.log(filtered);
+
+  const handleSinceChange = (date) => {
+    setSince(date);
+    filtered = filterTweets(data, since, until);
+  };
+
+  const handleUntilChange = (date) => {
+    setUntil(date);
+    filtered = filterTweets(data, since, until);
+  };
+
   const classes = useStyles();
-  console.log(data);
-  const filtered = data.filter((tweet) => {
-    const c = new Date(tweet.created_at);
-    const s = new Date(since);
-    return c > s;
-  });
 
   return (
     <>
-      <Container maxWidth="sm" className={classes.center}>
+      {data ? (
         <div>
-          <h3>以下のツイートが自動削除されます。</h3>
-          <TimePicker />
-          <List className={classes.root}>
-            {Object.values(filtered).map((tweet, index) => {
-              const date = dateFormatter(tweet.created_at);
-              return (
-                <div key={index}>
-                  <ListItem>
-                    <ListItemText primary={tweet.text} secondary={date} />
-                    <ListItemSecondaryAction>
-                      <IconButton edge="end" aria-label="delete">
-                        <DeleteIcon />
-                      </IconButton>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                  <Divider />
-                </div>
-              );
-            })}
-          </List>
+          <Container maxWidth="sm" className={classes.center}>
+            <TimePicker
+              since={since}
+              until={until}
+              onSinceChange={handleSinceChange}
+              onUntilChange={handleUntilChange}
+            />
+            <ListSubheader>{"削除予定ツイート"}</ListSubheader>
+            <List className={classes.root}>
+              {Object.values(filtered).map((tweet, index) => {
+                const date = dateFormatter(tweet.created_at);
+                return (
+                  <div key={index}>
+                    <ListItem>
+                      <ListItemText primary={tweet.text} secondary={date} />
+                      <ListItemSecondaryAction>
+                        <Tooltip title="削除予定リストから除外">
+                          <IconButton edge="end" aria-label="delete">
+                            <DeleteIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                    <Divider />
+                  </div>
+                );
+              })}
+            </List>
+          </Container>
         </div>
-      </Container>
+      ) : (
+        <LinearProgress />
+      )}
+      :
     </>
   );
 }
