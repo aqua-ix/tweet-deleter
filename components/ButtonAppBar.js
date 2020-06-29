@@ -28,7 +28,7 @@ export default function ButtonAppBar() {
       <AppBar position="fixed">
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
-            Twidnight
+            TweetDeleter
           </Typography>
           {user && (
             <IconButton color="inherit" onClick={() => logout()}>
