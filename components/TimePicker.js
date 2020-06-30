@@ -43,7 +43,7 @@ const getDateFormat = (date) => {
 export default function TimePicker(props) {
   const [sinceFormat, setSinceFormat] = useState(getDateFormat(props.since));
   const [untilFormat, setUntilFormat] = useState(getDateFormat(props.until));
-  const now = format(new Date(), "M/dd HH:mm");
+  const now = format(new Date(), "M/d HH:mm");
 
   const handleSinceChange = (date) => {
     setDateFormat(date, setSinceFormat);
