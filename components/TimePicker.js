@@ -28,9 +28,21 @@ const setDateFormat = (date, setFormat) => {
   }
 };
 
+const getDateFormat = (date) => {
+  if (isToday(date)) {
+    return "今日";
+  } else if (isYesterday(date)) {
+    return "昨日";
+  } else if (isTomorrow(date)) {
+    return "明日";
+  } else {
+    return "MM月dd日";
+  }
+};
+
 export default function TimePicker(props) {
-  const [sinceFormat, setSinceFormat] = useState("MM月dd日");
-  const [untilFormat, setUntilFormat] = useState("MM月dd日");
+  const [sinceFormat, setSinceFormat] = useState(getDateFormat(props.since));
+  const [untilFormat, setUntilFormat] = useState(getDateFormat(props.until));
   const now = format(new Date(), "M/dd HH:mm");
 
   const handleSinceChange = (date) => {
@@ -46,7 +58,7 @@ export default function TimePicker(props) {
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
       <h3>削除する時間範囲を指定してください</h3>
-      <h3>現在時刻: {now}</h3>
+      <h4>現在時刻: {now}</h4>
       <Grid container justify="space-around">
         <KeyboardDatePicker
           disableToolbar
@@ -65,7 +77,7 @@ export default function TimePicker(props) {
           margin="normal"
           id="since-time-picker"
           variant="inline"
-          label="ここから"
+          label=" "
           value={props.since}
           onChange={handleSinceChange}
           KeyboardButtonProps={{
@@ -89,7 +101,7 @@ export default function TimePicker(props) {
           margin="normal"
           id="until-time-picker"
           variant="inline"
-          label="ここまで"
+          label=" "
           value={props.until}
           onChange={handleUntilChange}
           KeyboardButtonProps={{

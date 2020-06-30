@@ -14,13 +14,7 @@ import TimePicker from "./TimePicker";
 import useSWR from "swr";
 import { useUser } from "../utils/auth/useUser";
 import LinearProgress from "@material-ui/core/LinearProgress";
-import DateFns, {
-  format,
-  set,
-  getHours,
-  startOfToday,
-  startOfTomorrow,
-} from "date-fns";
+import { format, set, getHours, startOfToday, startOfTomorrow } from "date-fns";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -80,7 +74,6 @@ export default function TweetList() {
   const [since, setSince] = useState(initialSinceDate());
   const [until, setUntil] = useState(initialUntilDate());
   let filtered = filterTweets(data, since, until);
-  console.log(filtered);
 
   const handleSinceChange = (date) => {
     setSince(date);
@@ -105,27 +98,31 @@ export default function TweetList() {
               onSinceChange={handleSinceChange}
               onUntilChange={handleUntilChange}
             />
-            <ListSubheader>{"削除予定ツイート"}</ListSubheader>
-            <List className={classes.root}>
-              {Object.values(filtered).map((tweet, index) => {
-                const date = dateFormatter(tweet.created_at);
-                return (
-                  <div key={index}>
-                    <ListItem>
-                      <ListItemText primary={tweet.text} secondary={date} />
-                      <ListItemSecondaryAction>
-                        <Tooltip title="削除予定リストから除外">
-                          <IconButton edge="end" aria-label="delete">
-                            <DeleteIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                    <Divider />
-                  </div>
-                );
-              })}
-            </List>
+            <h3>{"削除予定ツイート"}</h3>
+            {filtered === [] ? (
+              <List className={classes.root}>
+                {Object.values(filtered).map((tweet, index) => {
+                  const date = dateFormatter(tweet.created_at);
+                  return (
+                    <div key={index}>
+                      <ListItem>
+                        <ListItemText primary={tweet.text} secondary={date} />
+                        <ListItemSecondaryAction>
+                          <Tooltip title="削除予定リストから除外">
+                            <IconButton edge="end" aria-label="delete">
+                              <DeleteIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </ListItemSecondaryAction>
+                      </ListItem>
+                      <Divider />
+                    </div>
+                  );
+                })}
+              </List>
+            ) : (
+              <h4>削除対象のツイートはありません</h4>
+            )}
           </Container>
         </div>
       ) : (
