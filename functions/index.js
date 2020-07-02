@@ -7,8 +7,8 @@ const functions = require("firebase-functions");
 //  response.send("Hello from Firebase!");
 // });
 
-exports.setupUser = functions.auth.user().onCreate((user) => {});
-
+// 自動ツイートbot
+// https://qiita.com/Swordroot_M/items/3b9ec5129c323ef32ee0
 exports.saveTweetList = export const tweet = functions.pubsub
     .topic('daily-tick')
     .onPublish(async event => {
@@ -19,3 +19,16 @@ exports.saveTweetList = export const tweet = functions.pubsub
         throw error;
     }
 })
+
+// TODO DBからツイートを取得し、除外リスト中のIDを除いて削除する
+
+// TODO Jobを定期実行
+// https://developers-jp.googleblog.com/2017/04/how-to-schedule-cron-jobs-with-cloud.html
+
+/* users collection
+    tweets
+    time
+    query
+    exclude
+    enable
+*/
