@@ -15,7 +15,6 @@ import useSWR from "swr";
 import { useUser } from "../utils/auth/useUser";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import { format, set, getHours, startOfToday, startOfTomorrow } from "date-fns";
-import { idText } from "typescript";
 
 const useStyles = makeStyles((theme) => ({
   root: {

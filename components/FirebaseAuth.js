@@ -30,6 +30,17 @@ const firebaseAuthConfig = {
         email,
         token: xa,
       };
+      // firebase
+      //   .firestore()
+      //   .collection("users")
+      //   .doc(firebase.auth().currentUser.uid)
+      //   .set({
+      //     exclude_tweets: [],
+      //     is_enable: true,
+      //     params: "",
+      //     time: "",
+      //   });
+      console.log(firebase.auth().currentUser);
       cookie.set("auth", userData, {
         expires: 1,
       });
