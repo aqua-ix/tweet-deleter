@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 import firebase from "firebase/app";
 import "firebase/auth";
+import "firebase/firestore";
 import cookie from "js-cookie";
 import initFirebase from "../utils/auth/initFirebase";
 
@@ -30,17 +31,23 @@ const firebaseAuthConfig = {
         email,
         token: xa,
       };
-      // firebase
-      //   .firestore()
-      //   .collection("users")
-      //   .doc(firebase.auth().currentUser.uid)
-      //   .set({
-      //     exclude_tweets: [],
-      //     is_enable: true,
-      //     params: "",
-      //     time: "",
-      //   });
-      console.log(firebase.auth().currentUser);
+
+      // TODO DBにユーザー作成
+      const db = firebase.firestore().collection("users");
+      db.get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          console.log(`${doc.id} => ${doc.data()}`);
+        });
+      });
+      db.doc(firebase.auth().currentUser.uid)
+        .set({
+          exclude_tweets: "",
+          is_enable: true,
+          params: "",
+          time: "",
+        })
+        .then(() => alert("Document created."))
+        .catch((error) => alert(`エラーが発生しました: ${error}`));
       cookie.set("auth", userData, {
         expires: 1,
       });
