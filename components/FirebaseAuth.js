@@ -45,34 +45,18 @@ const FirebaseAuth = () => {
   const [renderAuth, setRenderAuth] = useState(false);
   useEffect(() => {
     if (typeof window !== "undefined") {
-      console.log(firebase.auth());
-      if (firebase.auth().currentUser) {
-        const db = firebase
-          .firestore()
-          .collection("users")
-          .doc(firebase.auth().currentUser.uid);
-        db.set({
-          exclude_tweets: "",
-          is_enable: true,
-          params: "",
-          time: "",
-        })
-          .then(() => setRenderAuth(true))
-          .catch((error) => alert(`エラーが発生しました: ${error}`));
-      } else {
-        setRenderAuth(true);
-      }
+      setRenderAuth(true);
     }
   }, []);
   return (
-    <div>
+    <>
       {renderAuth ? (
         <StyledFirebaseAuth
           uiConfig={firebaseAuthConfig}
           firebaseAuth={firebase.auth()}
         />
       ) : null}
-    </div>
+    </>
   );
 };
 
