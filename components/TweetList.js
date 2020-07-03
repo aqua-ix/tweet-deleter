@@ -6,6 +6,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Divider from "@material-ui/core/Divider";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import Box from "@material-ui/core/Box";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/RemoveCircle";
 import AddIcon from "@material-ui/icons/AddCircle";
@@ -155,7 +156,7 @@ export default function TweetList() {
                           </Tooltip>
                         </ListItemSecondaryAction>
                       </ListItem>
-                      <Divider />
+                      <Box m="0.5rem" />
                     </div>
                   );
                 })}
@@ -163,7 +164,6 @@ export default function TweetList() {
             ) : (
               <h4>削除対象のツイートはありません</h4>
             )}
-            <Divider />
             <h3>削除対象外ツイート</h3>
             {exclude.length ? (
               <List className={classes.root}>
@@ -174,7 +174,7 @@ export default function TweetList() {
                       <ListItem>
                         <ListItemText primary={tweet.text} secondary={date} />
                         <ListItemSecondaryAction>
-                          <Tooltip title="削除予定リストから除外">
+                          <Tooltip title="削除対象に戻す">
                             <IconButton
                               edge="end"
                               aria-label="remove"
@@ -186,7 +186,7 @@ export default function TweetList() {
                           </Tooltip>
                         </ListItemSecondaryAction>
                       </ListItem>
-                      <Divider />
+                      <Box m="0.5rem" />
                     </div>
                   );
                 })}

@@ -5,6 +5,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import Logout from "@material-ui/icons/ExitToApp";
+import Tooltip from "@material-ui/core/Tooltip";
 import { useUser } from "../utils/auth/useUser";
 
 const useStyles = makeStyles((theme) => ({
@@ -31,9 +32,11 @@ export default function ButtonAppBar() {
             TweetDeleter
           </Typography>
           {user && (
-            <IconButton color="inherit" onClick={() => logout()}>
-              <Logout />
-            </IconButton>
+            <Tooltip title="ログアウト">
+              <IconButton color="inherit" onClick={() => logout()}>
+                <Logout />
+              </IconButton>
+            </Tooltip>
           )}
         </Toolbar>
       </AppBar>
