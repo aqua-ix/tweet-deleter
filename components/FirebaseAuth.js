@@ -32,22 +32,6 @@ const firebaseAuthConfig = {
         token: xa,
       };
 
-      // TODO DBにユーザー作成
-      const db = firebase.firestore().collection("users");
-      db.get().then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          console.log(`${doc.id} => ${doc.data()}`);
-        });
-      });
-      db.doc(firebase.auth().currentUser.uid)
-        .set({
-          exclude_tweets: "",
-          is_enable: true,
-          params: "",
-          time: "",
-        })
-        .then(() => alert("Document created."))
-        .catch((error) => alert(`エラーが発生しました: ${error}`));
       cookie.set("auth", userData, {
         expires: 1,
       });
@@ -61,7 +45,23 @@ const FirebaseAuth = () => {
   const [renderAuth, setRenderAuth] = useState(false);
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setRenderAuth(true);
+      console.log(firebase.auth());
+      if (firebase.auth().currentUser) {
+        const db = firebase
+          .firestore()
+          .collection("users")
+          .doc(firebase.auth().currentUser.uid);
+        db.set({
+          exclude_tweets: "",
+          is_enable: true,
+          params: "",
+          time: "",
+        })
+          .then(() => setRenderAuth(true))
+          .catch((error) => alert(`エラーが発生しました: ${error}`));
+      } else {
+        setRenderAuth(true);
+      }
     }
   }, []);
   return (
