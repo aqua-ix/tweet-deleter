@@ -33,13 +33,34 @@ const useUser = () => {
       .collection("users")
       .doc(user.uid)
       .set({
-        exclude_tweets: "",
-        is_enable: true,
-        params: "",
-        time: "",
+        exclude_tweets: [],
+        is_enable: false,
+        params: [],
+        start_time: "",
+        end_time: "",
       })
-      .then(() => console.log("User created"))
-      .catch((error) => alert(`エラーが発生しました: ${error}`));
+      .then(() => {
+        console.log("User created");
+      })
+      .catch((error) => alert(error));
+  };
+
+  const retrieve = (user) => {
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(user.uid)
+      .get()
+      .then((res) => {
+        if (res.exists) {
+          console.log("User received");
+          console.log(res.data());
+          return res;
+        } else {
+          create(user);
+        }
+      })
+      .catch((error) => alert(error));
   };
 
   useEffect(() => {
@@ -49,8 +70,7 @@ const useUser = () => {
       return;
     }
     firebase.auth().onAuthStateChanged((user) => {
-      // TODO すでにユーザー作成されているかに応じて条件分岐
-      create(user);
+      retrieve(user);
     });
     setUser(JSON.parse(cookie));
   }, []);
