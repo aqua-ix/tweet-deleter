@@ -1,6 +1,6 @@
 # Tweet Deleter
 
-A web application that automatically deletes arbitrary tweets
+This is the web application that automatically deletes arbitrary tweets
 
 ## How to use
 
