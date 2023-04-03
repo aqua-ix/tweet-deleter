@@ -1,6 +1,6 @@
-# Example: Firebase authentication with a serverless API
+# Tweet Deleter
 
-This example includes Firebase authentication and serverless [API routes](https://nextjs.org/docs/api-routes/introduction).
+A web application that automatically deletes arbitrary tweets
 
 ## How to use
 
